@@ -3,6 +3,7 @@ package com.pms.controller;
 
 import com.pms.comm.CommController;
 import com.pms.comm.CommService;
+import com.pms.comm.exception.ApiCode;
 import com.pms.domain.booking.Booking;
 import com.pms.domain.booking.BookingState;
 import com.pms.dto.ResponseDTO;
@@ -56,6 +57,13 @@ public class BookingController extends CommController {
         return SuccessReturn();
     }
 
+    @GetMapping(value={"/getPaymentData/{bookingId}", "/getPaymentData"})
+    public ResponseEntity getPaymentData(@PathVariable String bookingId){
+        Booking booking = bookingService.getBookingByBookingId(bookingId);
+        bookingService.getPaymentData(booking.getPaymentKey());
+        return SuccessReturn();
+    }
+
     /**
      * 취소 확정 : PMS
      */
@@ -65,12 +73,15 @@ public class BookingController extends CommController {
         Booking booking = bookingService.getBookingByBookingId(bookingId);
         booking.setBookingState(BookingState.CF);
         bookingService.insertOrUpdateBooking(booking);
+
         // TODO: TOSS 취소
+        String refund = "0";
+        if(bookingService.cancelBooking(booking.getPaymentKey(), refund)){
+            return ErrorReturn(ApiCode.BOOKING_CANCEL_ERROR);
+        };
 
         // TODO: User에게 취소문자 발송
 
-        return ResponseEntity.ok().body(
-                ResponseDTO.builder().code(200).codeMsg("Success").data("").build()
-        );
+        return SuccessReturn();
     }
 }

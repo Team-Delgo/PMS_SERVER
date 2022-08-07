@@ -34,6 +34,7 @@ public class API {
 
         //BOOKING ERROR
         public static final int BOOKING_NOT_EXIST = 314;
+        public static final int BOOKING_CANCEL_ERROR = 320;
 
         //EMAIL ERROR
         public static final int EMAIL_NOT_EXIST = 315;

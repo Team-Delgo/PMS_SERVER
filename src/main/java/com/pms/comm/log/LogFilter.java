@@ -26,7 +26,7 @@ public class LogFilter extends OncePerRequestFilter {
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
 
         // form-data로 받을 때는 Wrapper 사용하면 ERROR 발생
-        if (request.getMethod().equals(POST) && request.getContentType().equals(TYPE_JSON)
+        if (request.getMethod().equals(POST)
                 && !request.getRequestURI().equals("/loginSuccess") && !request.getRequestURI().equals("/loginFail")) {
             RequestBodyWrapper wrappingRequest = new RequestBodyWrapper((HttpServletRequest) request);
             wrappingRequest.setAttribute("requestBody", wrappingRequest.getRequestBody());
