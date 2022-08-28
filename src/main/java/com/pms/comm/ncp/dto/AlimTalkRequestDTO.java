@@ -1,4 +1,4 @@
-package com.pms.comm.ncp.dto.alimTalk;
+package com.pms.comm.ncp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +11,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
-public class AlimTalkMessageDTO {
-    private String countryCode;
-    private String to;
-    private String content;
-    private List<AlimTalkButtonDTO> buttons;
+public class AlimTalkRequestDTO {
+    private String plusFriendId;
+    private String templateCode;
+    private List<AlimTalkMessageDTO> messages;
 }
