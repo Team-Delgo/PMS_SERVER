@@ -36,6 +36,8 @@ public class BookingService extends CommService {
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
 
+    private final String toss_key = "dGVzdF9za19PeUwwcVo0RzFWT0xvYkI2S3d2cm9XYjJNUVlnOg==";
+
     public Booking insertOrUpdateBooking(Booking booking) {
         return bookingRepository.save(booking);
     }
@@ -92,7 +94,7 @@ public class BookingService extends CommService {
     public void getPaymentData(String paymentKey){
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey))
-                .header("Authorization", "Basic dGVzdF9za19BRHBleE1na1czNkdKcUtFSm9CVkdiUjVvek8wOg==")
+                .header("Authorization", toss_key)
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         try {
@@ -107,7 +109,7 @@ public class BookingService extends CommService {
     public boolean cancelBooking(String paymentKey, String refund){
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel"))
-                .header("Authorization", "Basic dGVzdF9za19BRHBleE1na1czNkdKcUtFSm9CVkdiUjVvek8wOg==")
+                .header("Authorization", toss_key)
                 .header("Content-Type", "application/json")
                 .method("POST", HttpRequest.BodyPublishers.ofString("{\"cancelReason\":\"고객이 취소를 원함\",\"cancelAmount\":" + refund + "}"))
                 .build();
