@@ -21,7 +21,6 @@ public class Room {
     private String name;
     private int personMaxNum;
     private int personStandardNum;
-    private String petSizeLimit;
     @CreationTimestamp
     @JsonIgnore
     private LocalDate registDt;
