@@ -24,6 +24,7 @@ import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Slf4j
@@ -36,7 +37,13 @@ public class BookingService extends CommService {
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
 
-    private final String toss_key = "dGVzdF9za181bUJaMWdRNFlWWHp5Z3pBTTBhOGwyS1BvcU5iOg==";
+    private final String SECRET_KEY = "test_sk_5mBZ1gQ4YVXzygzAM0a8l2KPoqNb:";
+
+    byte[] targetBytes = SECRET_KEY.getBytes();
+    Base64.Encoder encoder = Base64.getEncoder();
+    byte[] toss_key = encoder.encode(targetBytes);
+
+//    private final String toss_key = "dGVzdF9za181bUJaMWdRNFlWWHp5Z3pBTTBhOGwyS1BvcU5iOg==";
 
     public Booking insertOrUpdateBooking(Booking booking) {
         return bookingRepository.save(booking);
@@ -94,7 +101,7 @@ public class BookingService extends CommService {
     public void getPaymentData(String paymentKey){
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey))
-                .header("Authorization", toss_key)
+                .header("Authorization", String.valueOf(toss_key))
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         try {
@@ -109,7 +116,7 @@ public class BookingService extends CommService {
     public boolean cancelBooking(String paymentKey, String refund){
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel"))
-                .header("Authorization", toss_key)
+                .header("Authorization", String.valueOf(toss_key))
                 .header("Content-Type", "application/json")
                 .method("POST", HttpRequest.BodyPublishers.ofString("{\"cancelReason\":\"고객이 취소를 원함\",\"cancelAmount\":" + refund + "}"))
                 .build();
