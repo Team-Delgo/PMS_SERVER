@@ -36,7 +36,7 @@ public class BookingService extends CommService {
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
 
-    private final String toss_key = "dGVzdF9za19PeUwwcVo0RzFWT0xvYkI2S3d2cm9XYjJNUVlnOg==";
+    private final String toss_key = "dGVzdF9za181bUJaMWdRNFlWWHp5Z3pBTTBhOGwyS1BvcU5iOg==";
 
     public Booking insertOrUpdateBooking(Booking booking) {
         return bookingRepository.save(booking);
