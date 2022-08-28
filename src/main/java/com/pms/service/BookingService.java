@@ -43,8 +43,6 @@ public class BookingService extends CommService {
     Base64.Encoder encoder = Base64.getEncoder();
     byte[] toss_key = encoder.encode(targetBytes);
 
-//    private final String toss_key = "dGVzdF9za181bUJaMWdRNFlWWHp5Z3pBTTBhOGwyS1BvcU5iOg==";
-
     public Booking insertOrUpdateBooking(Booking booking) {
         return bookingRepository.save(booking);
     }
@@ -98,21 +96,6 @@ public class BookingService extends CommService {
         return finalList;
     }
 
-    public void getPaymentData(String paymentKey){
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey))
-                .header("Authorization", String.valueOf(toss_key))
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-        try {
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-        } catch (Exception e){
-
-        }
-
-    }
-
     public boolean cancelBooking(String paymentKey, String refund){
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel"))
@@ -130,15 +113,4 @@ public class BookingService extends CommService {
         }
         return false;
     }
-
-
-//    //TODO: 카톡 알림으로 변경
-//    public void sendBookingMsg(int userId) {
-//        User user = userService.getUserByUserId(userId);
-//        // TODO: 사용자에게 예약대기문자 발송 [ 내용 어떤 거 들어갈지 생각 필요 ]
-////        smsService.sendSMS(user.getPhoneNo(), "예약완료 될 때까지 기다려주세요.");
-//
-//        // TODO: 운영진에게 예약요청문자 발송 [ 내용 어떤 거 들어갈지 생각 필요 ]
-////        smsService.sendSMS(adminPhoneNo, "예약요청이 들어왔습니다.");
-//    }
 }

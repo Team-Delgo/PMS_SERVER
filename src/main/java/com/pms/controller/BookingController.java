@@ -79,8 +79,18 @@ public class BookingController extends CommController {
         if(bookingService.cancelBooking(booking.getPaymentKey(), refund)){
             return ErrorReturn(ApiCode.BOOKING_CANCEL_ERROR);
         };
-
-        // TODO: User에게 취소문자 발송
+        
+        // TODO: TOSS 취소 [추후 추가]
+        try {
+            // 운영진에게 예약 요청 문자 발송
+            String adminMsg = "예약번호 : " + booking.getBookingId() + " 취소완료 했습니다.";
+            smsService.sendSMS(ADMIN_PHONE_NO, adminMsg);
+            // 사용자에게 예약 확정 문자 발송
+            alimService.sendCancelAlimTalk(booking);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ErrorReturn(ApiCode.SMS_ERROR);
+        }
 
         return SuccessReturn();
     }
