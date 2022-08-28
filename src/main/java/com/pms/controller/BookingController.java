@@ -87,6 +87,12 @@ public class BookingController extends CommController {
         booking.setBookingState(BookingState.CF);
         bookingService.insertOrUpdateBooking(booking);
 
+        // TODO: TOSS 취소
+        String refund = "0";
+        if(bookingService.cancelBooking(booking.getPaymentKey(), refund)){
+            return ErrorReturn(ApiCode.BOOKING_CANCEL_ERROR);
+        };
+
         // TODO: TOSS 취소 [추후 추가]
         try {
             // 운영진에게 예약 요청 문자 발송

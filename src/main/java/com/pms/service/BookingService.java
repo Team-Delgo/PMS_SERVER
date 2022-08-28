@@ -17,9 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +36,12 @@ public class BookingService extends CommService {
     private final PlaceRepository placeRepository;
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
+
+    private final String SECRET_KEY = "test_sk_5mBZ1gQ4YVXzygzAM0a8l2KPoqNb:";
+
+    byte[] targetBytes = SECRET_KEY.getBytes();
+    Base64.Encoder encoder = Base64.getEncoder();
+    byte[] toss_key = encoder.encode(targetBytes);
 
     public Booking insertOrUpdateBooking(Booking booking) {
         return bookingRepository.save(booking);
@@ -85,13 +96,21 @@ public class BookingService extends CommService {
         return finalList;
     }
 
-//    //TODO: 카톡 알림으로 변경
-//    public void sendBookingMsg(int userId) {
-//        User user = userService.getUserByUserId(userId);
-//        // TODO: 사용자에게 예약대기문자 발송 [ 내용 어떤 거 들어갈지 생각 필요 ]
-////        smsService.sendSMS(user.getPhoneNo(), "예약완료 될 때까지 기다려주세요.");
-//
-//        // TODO: 운영진에게 예약요청문자 발송 [ 내용 어떤 거 들어갈지 생각 필요 ]
-////        smsService.sendSMS(adminPhoneNo, "예약요청이 들어왔습니다.");
-//    }
+    public boolean cancelBooking(String paymentKey, String refund){
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel"))
+                .header("Authorization", String.valueOf(toss_key))
+                .header("Content-Type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString("{\"cancelReason\":\"고객이 취소를 원함\",\"cancelAmount\":" + refund + "}"))
+                .build();
+
+        try {
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
+            return true;
+        } catch (Exception e){
+            log.warn("Refund error");
+        }
+        return false;
+    }
 }

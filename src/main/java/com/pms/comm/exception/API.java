@@ -33,6 +33,7 @@ public class API {
         public static final int REVIEW_DUPLICATE_ERROR = 313;
 
         //BOOKING ERROR
+        public static final int BOOKING_CANCEL_ERROR = 320;
         public static final int BOOKING_CANCEL_STATE_ERROR = 314;
 
         //EMAIL ERROR
