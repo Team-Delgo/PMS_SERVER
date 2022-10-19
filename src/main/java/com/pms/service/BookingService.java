@@ -67,13 +67,11 @@ public class BookingService extends CommService {
                     .orElseThrow(() -> new NullPointerException("NOT FOUND PLACE"));
             Room room = roomRepository.findByRoomId(booking.getRoomId())
                     .orElseThrow(() -> new NullPointerException("NOT FOUND ROOM"));
-            User user = userRepository.findByUserId(booking.getUserId())
-                    .orElseThrow(() -> new NullPointerException("NOT FOUND USER"));
 
             returnDtoList.add(ReturnBookingDTO.builder()
                     .bookingId(booking.getBookingId())
                     .reservedName(booking.getReservedName())
-                    .userPhoneNo(user.getPhoneNo())
+                    .userPhoneNo(booking.getReservedPhoneNo())
                     .placeName(place.getName())
                     .roomName(room.getName())
                     .startDt(booking.getStartDt())
