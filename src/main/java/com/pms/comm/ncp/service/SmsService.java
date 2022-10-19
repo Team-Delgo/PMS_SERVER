@@ -3,9 +3,9 @@ package com.pms.comm.ncp.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pms.comm.ncp.dto.SmsMessageDTO;
-import com.pms.comm.ncp.dto.SmsRequestDTO;
-import com.pms.comm.ncp.dto.SmsResponseDTO;
+import com.pms.comm.ncp.dto.sms.SmsMessageDTO;
+import com.pms.comm.ncp.dto.sms.SmsRequestDTO;
+import com.pms.comm.ncp.dto.sms.SmsResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
