@@ -1,4 +1,4 @@
-package com.pms.comm.ncp.dto;
+package com.pms.comm.ncp.dto.sms;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
-public class AlimTalkMessageDTO {
-    private String countryCode;
+public class SmsMessageDTO {
     private String to;
     private String content;
 }

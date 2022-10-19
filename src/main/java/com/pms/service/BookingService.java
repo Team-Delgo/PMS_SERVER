@@ -41,7 +41,8 @@ public class BookingService extends CommService {
 
     byte[] targetBytes = SECRET_KEY.getBytes();
     Base64.Encoder encoder = Base64.getEncoder();
-    byte[] toss_key = encoder.encode(targetBytes);
+    byte[] encodedBytes = encoder.encode(targetBytes);
+    String toss_key = "Basic " + new String(encodedBytes);
 
     public Booking insertOrUpdateBooking(Booking booking) {
         return bookingRepository.save(booking);
@@ -99,7 +100,7 @@ public class BookingService extends CommService {
     public boolean cancelBooking(String paymentKey, String refund){
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.tosspayments.com/v1/payments/" + paymentKey + "/cancel"))
-                .header("Authorization", String.valueOf(toss_key))
+                .header("Authorization", toss_key)
                 .header("Content-Type", "application/json")
                 .method("POST", HttpRequest.BodyPublishers.ofString("{\"cancelReason\":\"고객이 취소를 원함\",\"cancelAmount\":" + refund + "}"))
                 .build();

@@ -1,4 +1,4 @@
-package com.pms.comm.ncp.dto;
+package com.pms.comm.ncp.dto.sms;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
