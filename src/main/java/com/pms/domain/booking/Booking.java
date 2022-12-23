@@ -1,10 +1,9 @@
 package com.pms.domain.booking;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.pms.domain.Place;
+import com.pms.domain.Room;
+import com.pms.dto.booking.BookingResDTO;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
@@ -13,9 +12,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import java.time.LocalDate;
 
-@Data
+@Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Booking {
@@ -37,4 +37,24 @@ public class Booking {
     private BookingState bookingState;
     private String orderId; // toss OrderId
     private String paymentKey; // toss 취소할 때 사용.
+
+    public Booking setBookingState(BookingState state) {
+        this.bookingState = state;
+
+        return this;
+    }
+
+    public BookingResDTO toResDTO(Place place, Room room){
+        return BookingResDTO.builder()
+                .bookingId(bookingId)
+                .reservedName(reservedName)
+                .userPhoneNo(reservedPhoneNo)
+                .placeName(place.getName())
+                .roomName(room.getName())
+                .startDt(startDt)
+                .endDt(endDt)
+                .bookingState(bookingState)
+                .registDt(registDt)
+                .build();
+    }
 }

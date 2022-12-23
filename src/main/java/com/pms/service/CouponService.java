@@ -10,31 +10,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CouponService extends CommService {
+
     private final CouponManagerRepository couponManagerRepository;
 
-    // ------------------------------------- Coupon Manager -------------------------------------
-    public CouponManager insertOrUpdateCouponManager(CouponManager couponManager) {
+    public CouponManager register(CouponManager couponManager) {
         return couponManagerRepository.save(couponManager);
     }
 
-    public List<CouponManager> getAllList() {
+    public List<CouponManager> getAll() {
         return couponManagerRepository.findAll();
     }
 
-    public void deleteCouponManager(CouponManager couponManager) {
+    public void delete(CouponManager couponManager) {
         couponManagerRepository.delete(couponManager);
-    }
-
-    public CouponManager getCouponManagerByCode(String couponCode) {
-        return couponManagerRepository.findByCouponCode(couponCode)
-                .orElseThrow(() -> new NullPointerException("WRONG COUPON CODE")); // ERROR: Coupon Code 잘못된 입력
     }
 
     public CouponManager getCouponManagerById(int couponManagerId) {

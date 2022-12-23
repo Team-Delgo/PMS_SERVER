@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class CouponManagerDTO {
+public class CouponManagerReqDTO {
     @NotBlank
     private String couponCode;
     @NotBlank
@@ -23,7 +23,7 @@ public class CouponManagerDTO {
     @NotNull
     private Integer validDt;
 
-    public CouponManager build() {
+    public CouponManager toEntity() {
         return CouponManager.builder()
                 .couponCode(this.couponCode)
                 .couponType(this.couponType)

@@ -17,7 +17,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
 
     // PlaceId로 Place 조회
-    public Place getPlaceByPlaceId(int placeId) {
+    public Place getPlaceById(int placeId) {
         return placeRepository.findByPlaceId(placeId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND PLACE"));
     }

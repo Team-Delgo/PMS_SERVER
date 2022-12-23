@@ -17,7 +17,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
 
     // RoomId로 Room 조회
-    public Room getRoomByRoomId(int roomId) {
+    public Room getRoomById(int roomId) {
         return roomRepository.findByRoomId(roomId)
                 .orElseThrow(() -> new NullPointerException("NOT FOUND ROOM"));
     }
