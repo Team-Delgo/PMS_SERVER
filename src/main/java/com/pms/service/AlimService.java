@@ -27,9 +27,9 @@ public class AlimService {
     private final CancelService cancelService;
 
     public void sendFixAlimTalk(Booking booking) throws IOException {
-        Place place = placeService.getPlaceByPlaceId(booking.getPlaceId());
-        Room room = roomService.getRoomByRoomId(booking.getRoomId());
-        User user = userService.getUserByUserId(booking.getUserId());
+        Place place = placeService.getPlaceById(booking.getPlaceId());
+        Room room = roomService.getRoomById(booking.getRoomId());
+        User user = userService.getUserById(booking.getUserId());
         try {
             String content = "[Delgo] 예약확정 안내\n" +
                     "안녕하세요? " + booking.getReservedName() + "님의 예약이 확정되었습니다.\n" +
@@ -48,9 +48,9 @@ public class AlimService {
     }
 
     public void sendCancelAlimTalk(Booking booking) throws IOException {
-        Place place = placeService.getPlaceByPlaceId(booking.getPlaceId());
-        Room room = roomService.getRoomByRoomId(booking.getRoomId());
-        User user = userService.getUserByUserId(booking.getUserId());
+        Place place = placeService.getPlaceById(booking.getPlaceId());
+        Room room = roomService.getRoomById(booking.getRoomId());
+        User user = userService.getUserById(booking.getUserId());
         Period period = Period.between(LocalDate.now(), booking.getStartDt());
         int commission = 0;
 
