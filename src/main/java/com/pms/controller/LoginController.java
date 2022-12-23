@@ -1,14 +1,12 @@
 package com.pms.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-
 import com.pms.comm.CommController;
 import com.pms.comm.exception.ApiCode;
-import com.pms.comm.security.jwt.Access_JwtProperties;
-import com.pms.comm.security.jwt.Refresh_JwtProperties;
+import com.pms.comm.security.jwt.JwtService;
+import com.pms.comm.security.jwt.JwtToken;
+import com.pms.comm.security.jwt.config.AccessTokenProperties;
+import com.pms.comm.security.jwt.config.RefreshTokenProperties;
 import com.pms.domain.Admin;
-import com.pms.service.TokenService;
 import com.pms.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,31 +25,22 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController extends CommController {
 
     private final AdminService adminService;
-    private final TokenService tokenService;
-
-    final String ACCESS = "Access";
-    final String REFRESH = "Refresh";
-    final String ADMIN_ID = "adminId";
-
+    private final JwtService jwtService;
     /*
      * Login 성공
      * Header [ Access_Token, Refresh_Token ]
      * Body [ User , Pet ]
      * 담아서 반환한다.
      */
-    @PostMapping("/loginSuccess")
+    @PostMapping("/login/success")
     public ResponseEntity<?> loginSuccess(HttpServletRequest request, HttpServletResponse response) {
-        log.info("들어옴");
-        String adminId = request.getAttribute(ADMIN_ID).toString();
+        int adminId = Integer.parseInt(request.getAttribute("adminId").toString());
 
-        Admin admin = adminService.getAdminByAdminId(Integer.parseInt(adminId));
-        admin.setPassword(""); // 보안
+        Admin admin = adminService.getAdminById(adminId).removePassword();
 
-        String Access_jwtToken = tokenService.createToken(ACCESS, adminId); // Access Token 생성
-        String Refresh_jwtToken = tokenService.createToken(REFRESH, adminId); // Refresh Token 생성
-
-        response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-        response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
+        JwtToken jwt = jwtService.createToken(adminId);
+        response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+        response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
         return SuccessReturn(admin);
     }
@@ -61,7 +50,7 @@ public class LoginController extends CommController {
      * ErrorCode 반환.
      */
 
-    @PostMapping("/loginFail")
+    @PostMapping("/login/fail")
     public ResponseEntity<?> loginFail() {
         return ErrorReturn(ApiCode.LOGIN_ERROR);
     }
@@ -71,19 +60,12 @@ public class LoginController extends CommController {
      * Refresh_Token 인증 진행
      * 성공 : 재발급, 실패 : 오류 코드 반환
      */
-    @GetMapping("/tokenReissue")
+    @GetMapping("/token/reissue")
     public ResponseEntity<?> tokenReissue(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String token = request.getHeader(Refresh_JwtProperties.HEADER_STRING)
-                    .replace(Refresh_JwtProperties.TOKEN_PREFIX, "");
-            String adminId = JWT.require(Algorithm.HMAC512(Refresh_JwtProperties.SECRET)).build().verify(token)
-                    .getClaim(ADMIN_ID).asString();
-
-            String Access_jwtToken = tokenService.createToken(ACCESS, adminId); // Access Token 생성
-            String Refresh_jwtToken = tokenService.createToken(REFRESH, adminId); // Refresh Token 생성
-
-            response.addHeader(Access_JwtProperties.HEADER_STRING, Access_JwtProperties.TOKEN_PREFIX + Access_jwtToken);
-            response.addHeader(Refresh_JwtProperties.HEADER_STRING, Refresh_JwtProperties.TOKEN_PREFIX + Refresh_jwtToken);
+            JwtToken jwt = jwtService.createToken(jwtService.getAdminIdByRefreshToken());
+            response.addHeader(AccessTokenProperties.HEADER_STRING, AccessTokenProperties.TOKEN_PREFIX + jwt.getAccessToken());
+            response.addHeader(RefreshTokenProperties.HEADER_STRING, RefreshTokenProperties.TOKEN_PREFIX + jwt.getRefreshToken());
 
             return SuccessReturn();
         } catch (Exception e) { // Refresh_Toekn 인증 실패 ( 로그인 화면으로 이동 필요 )
@@ -95,7 +77,7 @@ public class LoginController extends CommController {
      * TOKEN 인증 프로세스중 에러 발생
      * ErrorCode 반환.
      */
-    @RequestMapping("/tokenError")
+    @RequestMapping("/token/error")
     public ResponseEntity<?> tokenError() {
         return ErrorReturn(ApiCode.TOKEN_ERROR);
     }
