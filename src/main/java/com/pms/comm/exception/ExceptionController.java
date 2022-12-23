@@ -46,4 +46,8 @@ public class ExceptionController extends CommController {
                 ResponseDTO.builder().code(ApiCode.NOT_FOUND_DATA.getCode()).codeMsg(e.getMessage()).build());
     }
 
+    @ExceptionHandler
+    public ResponseEntity jwtException(BaseException e){
+        return ErrorReturn(e.getStatus());
+    }
 }

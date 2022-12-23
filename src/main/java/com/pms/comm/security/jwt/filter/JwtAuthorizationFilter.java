@@ -1,7 +1,8 @@
-package com.pms.comm.security.jwt;
+package com.pms.comm.security.jwt.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.pms.comm.security.jwt.config.AccessTokenProperties;
 import com.pms.comm.security.services.PrincipalDetails;
 import com.pms.domain.Admin;
 import com.pms.repository.AdminRepository;
@@ -14,7 +15,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,21 +37,19 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        String header = request.getHeader(Access_JwtProperties.HEADER_STRING);
+        String header = request.getHeader(AccessTokenProperties.HEADER_STRING);
         // Token 있는지 여부 체크
-        if (header == null || !header.startsWith(Access_JwtProperties.TOKEN_PREFIX)) {
+        if (header == null || !header.startsWith(AccessTokenProperties.TOKEN_PREFIX)) {
             chain.doFilter(request, response);
             return;
         }
 
-        String token = request.getHeader(Access_JwtProperties.HEADER_STRING)
-                .replace(Access_JwtProperties.TOKEN_PREFIX, "");
+        String token = request.getHeader(AccessTokenProperties.HEADER_STRING).replace(AccessTokenProperties.TOKEN_PREFIX, "");
 
         // 토큰 검증 (이게 인증이기 때문에 AuthenticationManager도 필요 없음)
         // SecurityContext에 접근해서 세션을 만들때 자동으로 UserDetailsService에 있는 loadByUsername이 호출됨.
         try {
-            String adminId = JWT.require(Algorithm.HMAC512(Access_JwtProperties.SECRET)).build().verify(token)
-                    .getClaim("adminId").asString();
+            String adminId = JWT.require(Algorithm.HMAC512(AccessTokenProperties.SECRET)).build().verify(token).getClaim("adminId").asString();
 
             log.info("JwtAuthorizationFilter adminId : " + adminId);
             if (adminId != null) {
@@ -72,9 +70,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
         } catch (Exception e) { // Token 시간 만료 및 토큰 인증 에러
             log.info("Access Token Expired : " + e.getLocalizedMessage());
-
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/tokenError");
-            dispatcher.forward(request, response);
+//            RequestDispatcher dispatcher = request.getRequestDispatcher("/token");
+//            dispatcher.forward(request, response);
+            chain.doFilter(request, response); // 403 Authorization Denied 발생
             return;
         }
         chain.doFilter(request, response);

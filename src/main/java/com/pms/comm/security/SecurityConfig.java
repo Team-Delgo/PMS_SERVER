@@ -2,8 +2,8 @@ package com.pms.comm.security;
 
 
 
-import com.pms.comm.security.jwt.JwtAuthenticationFilter;
-import com.pms.comm.security.jwt.JwtAuthorizationFilter;
+import com.pms.comm.security.jwt.filter.JwtAuthenticationFilter;
+import com.pms.comm.security.jwt.filter.JwtAuthorizationFilter;
 import com.pms.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -39,11 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(),adminRepository))
 				.authorizeRequests()
-//				.antMatchers("/test").authenticated()
-//				.antMatchers("/test2").authenticated()
-//				.antMatchers("/wish/**").authenticated()
-//				.antMatchers("/booking/**").authenticated()
-//				.antMatchers("/coupon/**").authenticated()
 //				.antMatchers("/review/write").authenticated()
 				.anyRequest().permitAll();
 	}

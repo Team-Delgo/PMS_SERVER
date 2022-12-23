@@ -1,4 +1,4 @@
-package com.pms.comm.security.jwt;
+package com.pms.comm.security.jwt.filter;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
